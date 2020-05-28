@@ -13,24 +13,28 @@ namespace ContestOzonGolangSchool.A
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 #endif
-            var input = File.ReadAllText("input-201.txt");
-            var digits = input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Select(e => int.Parse(e));
-            var successPairs = new HashSet<int>();
-            foreach (var digit in digits)
+            var incompletePairs = new HashSet<int>();
+            using (var inputStream = Console.OpenStandardInput())
+            using (var inputReader = new StreamReader(inputStream))
             {
-                if (successPairs.Contains(digit))
+                var line = string.Empty;
+                while ((line = inputReader.ReadLine()) != null)
                 {
-                    successPairs.Remove(digit);
-                }
-                else
-                {
-                    successPairs.Add(digit);
+                    var digit = int.Parse(line);
+                    if (incompletePairs.Contains(digit))
+                    {
+                        incompletePairs.Remove(digit);
+                    }
+                    else
+                    {
+                        incompletePairs.Add(digit);
+                    }
                 }
             }
 #if DEBUG
             Console.WriteLine(sw.ElapsedMilliseconds);
 #endif
-            Console.Write(successPairs.Count > 0 ? successPairs.First().ToString() : "None");
+            Console.WriteLine(incompletePairs.Count > 0 ? incompletePairs.First().ToString() : "None");
         }
     }
 }
