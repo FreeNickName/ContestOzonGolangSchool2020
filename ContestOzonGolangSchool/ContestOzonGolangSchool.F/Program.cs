@@ -21,13 +21,12 @@ namespace ContestOzonGolangSchool.F
             using (var inputReader = new StreamReader(inputStream))
             {
                 var sum = int.Parse(inputReader.ReadLine());
-                var str = inputReader.ReadLine();
 #if DEBUG
                 Console.WriteLine("Total memory 2: " + GC.GetTotalMemory(false));
 #endif
-                result = SumExistsEconom(sum, str);
+                result = SumExistsReadByWord(sum, inputReader);
             }
-            
+
             File.WriteAllText("output.txt", result.ToString());
 
 #if DEBUG
@@ -38,14 +37,28 @@ namespace ContestOzonGolangSchool.F
 #endif
         }
 
-        private static int SumExistsEconom(int sum, string digitsstr)
+        private static string GetWord(StreamReader reader)
+        {
+            string res = null;
+            while (!reader.EndOfStream)
+            {
+                var symbol = (char)reader.Read();
+                if (char.IsWhiteSpace(symbol))
+                {
+                    return res;
+                }
+                res += symbol;
+            }
+            return res;
+        }
+
+        private static int SumExistsReadByWord(int sum, StreamReader reader)
         {
             var hashMap = new HashSet<int>();
-            int idx;
-            //var prev = 0;
-            for (var prev = 0; (idx = digitsstr.IndexOf(" ", prev, StringComparison.Ordinal)) != -1; prev = idx +1)
+            string word;
+            while ((word = GetWord(reader)) != null)
             {
-                var digit = int.Parse(digitsstr.Substring(prev, idx - prev));
+                var digit = int.Parse(word);
                 if (digit >= sum)
                 {
                     continue;
@@ -55,34 +68,41 @@ namespace ContestOzonGolangSchool.F
                     return 1;
                 }
                 hashMap.Add(sum - digit);
-                //prev = idx + 1;
             }
             return 0;
         }
 
-        private static int SumExistsDic(int sum, string digitsStr)
+        private static int SumExistsSubstring(int sum, StreamReader reader)
         {
-            var hashMap = new Dictionary<int, object>();
-            foreach (var digit in digitsStr.Split(' ').Select(e => int.Parse(e)).ToArray())
+            var hashMap = new HashSet<int>();
+            int idx;
+            var digitsStr = reader.ReadLine();
+            for (var prev = 0; (idx = digitsStr.IndexOf(" ", prev, StringComparison.Ordinal)) != -1; prev = idx + 1)
+            {
+                var digit = int.Parse(digitsStr.Substring(prev, idx - prev));
+                if (digit >= sum)
+                {
+                    continue;
+                }
+                if (hashMap.Contains(digit))
+                {
+                    return 1;
+                }
+                hashMap.Add(sum - digit);
+            }
+            return 0;
+        }
+
+        private static int SumExistsArray(int sum, StreamReader reader)
+        {
+            var hashMap = new HashSet<int>();
+            var digits = reader.ReadLine().Split(' ').Select(e => int.Parse(e)).ToArray();
+            foreach (var digit in digits)
             {
                 if (digit >= sum)
                 {
                     continue;
                 }
-                if (hashMap.ContainsKey(digit))
-                {
-                    return 1;
-                }
-                hashMap.Add(sum - digit, null);
-            }
-            return 0;
-        }
-
-        private static int SumExistsHashSet(int sum, int[] digits)
-        {
-            var hashMap = new HashSet<int>();
-            foreach (var digit in digits)
-            {
                 if (hashMap.Contains(digit))
                 {
                     return 1;
@@ -92,6 +112,7 @@ namespace ContestOzonGolangSchool.F
             return 0;
         }
     }
+
 
     class SimpleSeacherSumm
     {
