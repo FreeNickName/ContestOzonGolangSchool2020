@@ -8,7 +8,9 @@ namespace ContestOzonGolangSchool.InputGenerator
     {
         static void Main(string[] args)
         {
-            switch (args.FirstOrDefault()?.ToLower())
+            var key = args.FirstOrDefault()?.ToLower();
+            Console.WriteLine("Key: " + key);
+            switch (key)
             {
                 case "a":
                     {
@@ -20,6 +22,18 @@ namespace ContestOzonGolangSchool.InputGenerator
                             res += random.Next() + Environment.NewLine;
                         }
                         File.WriteAllText("input-201.txt", res);
+                        break;
+                    }
+                case "f":
+                    {
+                        var random = new Random();
+                        var res = random.Next(1, 999999998) + Environment.NewLine;
+                        var max = int.Parse(args.Skip(1).FirstOrDefault() ?? "10000");
+                        for (var i = 0; i < max; i++)
+                        {
+                            res += random.Next(1, 999999998) + " ";
+                        }
+                        File.WriteAllText("input.txt", res.Trim());
                         break;
                     }
                 default:
