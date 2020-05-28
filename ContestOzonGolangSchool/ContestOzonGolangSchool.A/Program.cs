@@ -13,14 +13,14 @@ namespace ContestOzonGolangSchool.A
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 #endif
-            var incompletePairs = new HashSet<int>();
+            var incompletePairs = new HashSet<long>();
             using (var inputStream = Console.OpenStandardInput())
             using (var inputReader = new StreamReader(inputStream))
             {
                 var line = string.Empty;
                 while ((line = inputReader.ReadLine()) != null)
                 {
-                    var digit = int.Parse(line);
+                    var digit = long.Parse(line);
                     if (incompletePairs.Contains(digit))
                     {
                         incompletePairs.Remove(digit);
