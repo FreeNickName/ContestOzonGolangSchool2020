@@ -7,21 +7,48 @@ import (
 	"fmt"
 	// "math"
 )
-// import "math"
+
+type syncMap struct{
+	sync.RWMutex
+	m map[int]int
+}
+
+func CreateMap() *syncMap {
+	return &syncMap{m: make(map[int]int)}
+}
+
+func (b *syncMap) Load(key int) (int, bool) {
+    b.Lock()
+    defer b.Unlock()
+    val, ok := b.m[key]
+    return val, ok
+}
+
+func (b *syncMap) Store(key int, value int) {
+    b.Lock()
+    defer b.Unlock()
+    b.m[key] = value
+}
+
+func (b *syncMap) Delete(key int) {
+    b.Lock()
+    defer b.Unlock()
+    delete(b.m, key)
+}
+
 func Merge2Channels(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- int, n int) {
 	f1 := make(chan int, 10)
 	f2 := make(chan int, 10)
-	// var b1 sync.Map
 	b1 := CreateMap()
-	// var b2 sync.Map
 	b2 := CreateMap()
 	s1 := make(chan bool, 10)
 	s2 := make(chan bool, 10)
 
-	go UseFChannel(f, in1, f1, n, b1, s1)
-	go UseFChannel(f, in2, f2, n, b2, s2)
-	go BuffToChannel(f1, n, b1, s1)
-	go BuffToChannel(f2, n, b2, s2)
+	go ChannelToBuff(f, in1, n, b1, s1)
+	go ChannelToBuff(f, in2, n, b2, s2)
+
+	go MapToChanByOrder(b1, f1, n, s1)
+	go MapToChanByOrder(b2, f2, n, s2)
 
 	go SumChannels(f1, f2, out)
 }
@@ -49,91 +76,54 @@ func SumChannels(in1 <-chan int, in2 <-chan int, out chan<- int) {
 	}
 }
 
-func UseFChannel(f func(int) int, in1 <-chan int, out1 chan<- int, n int, b *buf, s chan<- bool) {
-// func UseFChannel(f func(int) int, in1 <-chan int, out1 chan<- int, n int, b *sync.Map, s chan<- bool) {
+func ChannelToBuff(f func(int) int, in <-chan int, max int, b *syncMap, done chan<- bool) {
 	i := 0
 	for  {
-		if i == n {
+		if i == max {
 			break
 		}
-		i++
-		res, ok := <-in1
+		res, ok := <-in
 		if !ok {
-			println("in1 closed")
+			println("in closed")
 			break
 		}
-		go RunF(f, i-1, res, b, s)
-		// out1 <- RunF(f, i, res, b)
+		go UseFToMap(f, i, res, b, done)
+		i++
 	}
-	// close(out1)
 }
 
-type buf struct{
-	sync.RWMutex
-	m map[int]int
+func UseFToMap(f func(int) int, key int, val int, b *syncMap, done chan<- bool) {
+	b.Store(key, f(val))
+	// println("f:", key, "=", val)
+	done <- true
 }
 
-func CreateMap() *buf {
-	return &buf{m: make(map[int]int)}
-}
-
-func (b *buf) Load(key int) (int, bool) {
-    b.Lock()
-    defer b.Unlock()
-    val, ok := b.m[key]
-    return val, ok
-}
-
-func (b *buf) Store(key int, value int) {
-    b.Lock()
-    defer b.Unlock()
-    b.m[key] = value
-}
-
-func (b *buf) Delete(key int) {
-    b.Lock()
-    defer b.Unlock()
-    delete(b.m, key)
-}
-
-// func BuffToChannel(out1 chan<- int, n int, b *sync.Map, signal <-chan bool) {
-func BuffToChannel(out1 chan<- int, n int, b *buf, signal <-chan bool) {
+// Запись мапа в канал по порядку ключей в asc, signal указывает наполнение мапа 
+func MapToChanByOrder(b *syncMap, out chan<- int, max int, signal <-chan bool) {
 	i := 0
 	for  {
-		if i == n {
+		if i == max {
 			break
 		}
 		select {
 			case _, oks := <-signal:
 				if (!oks) {
-					// return
+					println("signal closed")
+					return
 				}
-				// b.RLock()
 				for {
 					v, ok := b.Load(i)
-					// b.RUnlock()
-					// println("b:", i, "=", v)
+					// println("b", i, "=", v)
 					if !ok {
 						break
 					}	
-					out1 <- v //.(int)
-					// b.Lock()
-					// delete(b.m, i)
+					out <- v
 					b.Delete(i)
-					// b.Unlock()
 					i++
-					
 				}
 		}
 	}
-	close(out1)
-}
-
-// func RunF(f func(int) int, n int, x int, b *sync.Map, s chan<- bool) {
-func RunF(f func(int) int, n int, x int, b *buf, s chan<- bool) {
-	b.Store(n, f(x))
-	// println("f:", n, "=", x)
-	s <- true
+	close(out)
 }
 
 func f(x int) int {
@@ -150,8 +140,8 @@ func f_fast(x int) int {
 	return x * x
 }
 
-func pull(in1 chan<- int, x int, s int) {
-	in1 <- x
+func pull(in chan<- int, x int, s int) {
+	in <- x
 }
 
 func main() {
