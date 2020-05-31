@@ -5,11 +5,14 @@ import (
 	"time"
 	"math/rand"
 	"fmt"
+	"reflect"
 	// E "syncMap"
 	// E "syncCounter"
 	// E "asyncFEachIn"
 	// E "asyncF"
-	E "syncWG"
+	// E "sync1WG"
+	// E "sync2WG"
+	E "sync4WG"
 	// "math"
 )
 
@@ -40,8 +43,8 @@ func pull(in chan<- int, x int, s int) {
 
 func main() {
 	max := 1000
-
-	defer elapsed(fmt.Sprintf("[syncMap] max: %d", max))()
+	testName := reflect.TypeOf(E.PkgName{}).PkgPath()
+	defer elapsed(fmt.Sprintf("[%s] max: %d", testName, max))()
 
 	// var t sync.Map
 	// t.Store(1,1)

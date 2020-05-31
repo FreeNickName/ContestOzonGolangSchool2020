@@ -1,8 +1,10 @@
-package syncWG
+package sync4WG
 
 import (
 	"sync"
 )
+
+type PkgName struct {}
 
 func Merge2Channels(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- int, n int) {
 	// println()

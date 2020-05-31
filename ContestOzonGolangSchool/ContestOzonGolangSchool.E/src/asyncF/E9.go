@@ -1,5 +1,7 @@
 package asyncF
 
+type PkgName struct {}
+
 func Merge2Channels(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- int, n int) {
 	f1 := make(chan int, 10)
 	f2 := make(chan int, 10)

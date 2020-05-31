@@ -4,6 +4,8 @@ import (
 	"sync"
 )
 
+type PkgName struct {}
+
 type syncMap struct{
 	sync.RWMutex
 	m map[int]int
