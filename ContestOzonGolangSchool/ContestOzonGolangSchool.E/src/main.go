@@ -6,7 +6,8 @@ import (
 	"math/rand"
 	"fmt"
 	"reflect"
-	E "syncMap"
+	// E "syncMap"
+	E "syncMapWithStore"
 	// E "syncCounter"
 	// E "asyncFEachIn"
 	// E "only1Goroutine"
@@ -51,7 +52,7 @@ func main() {
 	max := 1000
 	complexity := 1000 * 1000 * 100
 
-	digitsPoolSize := max + 50
+	digitsPoolSize := max + 70
 	testName := reflect.TypeOf(E.PkgName{}).PkgPath()
 	defer elapsed(fmt.Sprintf("[%s] max: %d complexity: %d", testName, max, complexity))()
 
@@ -82,19 +83,17 @@ func main() {
 	cnt := 0
 	go func() {
 		defer wg.Done()
-		// println("M:wait")
 		for {
-			// println(cnt)
 			if cnt == max {
 				// close(in1)
 				// close(in2)
-				// println("main closed")
-				// return
+				println("M: iterations is done")
+				return
 			}	
 			select {
 			case res, ok := <-out:
 				if !ok {
-					println("main exit")
+					println("M: out is closed")
 					return
 				}
 				a := <-ans
