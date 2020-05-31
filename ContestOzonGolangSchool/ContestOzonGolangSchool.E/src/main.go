@@ -6,7 +6,9 @@ import (
 	"math/rand"
 	"fmt"
 	// E "syncMap"
-	E "syncCounter"
+	// E "syncCounter"
+	// E "asyncFEachIn"
+	E "asyncF"
 	// "math"
 )
 
