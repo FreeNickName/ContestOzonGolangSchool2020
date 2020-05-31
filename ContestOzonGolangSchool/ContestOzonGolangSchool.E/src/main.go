@@ -7,13 +7,14 @@ import (
 	"math/rand"
 	"fmt"
 	"reflect"
-	E "map2out"
+	// E "map2out"
 	// E "mapAndChan"
 	// E "mapAndCache"
 	// E "syncCounter"
 	// E "asyncChannels"
 	// E "asyncFAndSum"
 	// E "asyncF"
+	E "asyncF2"
 	// E "sync1WG"
 	// E "sync2WG"
 	// E "sync4WG"
@@ -66,7 +67,7 @@ func main() {
 	f := GetSlowF(complexity)
 
 	rand.Seed(time.Now().UnixNano())
-	go func() {
+	func() {
 		for i := 0; i < digitsPoolSize; i++ {
 			x1 := rand.Intn(1000)
 			ToChannel(in1, x1)
@@ -94,8 +95,8 @@ func main() {
 			if cnt == max {
 				// close(in1)
 				// close(in2)
-				println("M: iterations is done")
-				return
+				// println("M: iterations is done")
+				// return
 			}	
 			select {
 			case res, ok := <-out:
