@@ -41,7 +41,7 @@ func Merge2Channels(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- 
 func ProcessMerge(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- int, n int) {
 	b1 := CreateMap()
 	b2 := CreateMap()
-	s := make(chan bool, 10)
+	s := make(chan bool, 5)
 
 	go ChannelToBuff(f, in1, n, b1, s)
 	go ChannelToBuff(f, in2, n, b2, s)
@@ -79,13 +79,15 @@ func ReadBuffByOrder(b1 *syncMap, b2 *syncMap, out chan<- int, max int, signal <
 				break
 			}
 			v1, ok1 := b1.Load(i)
-			v2, ok2 := b2.Load(i)
 			// println("b1", i, "=", v1)
-			// println("b2", i, "=", v2)
-			if !ok1 || !ok2 {
+			if !ok1 {
 				break
 			}
-			
+			v2, ok2 := b2.Load(i)
+			// println("b2", i, "=", v2)
+			if !ok2 {
+				break
+			}
 			out <- v1 + v2
 			b1.Delete(i)
 			b2.Delete(i)
