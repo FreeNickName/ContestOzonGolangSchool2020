@@ -116,17 +116,6 @@ func (c *counter) IsDone() bool {
     return c.i == c.max
 }
 
-// func Counter() func(x int) int {
-// 	i := 0
-// 	return func() (ret int) {
-// 		for _, num := range params {
-// 			sum += num
-// 		}
-// 		ret = sum
-// 		return
-// 	}
-// }
-
 func CreateCounter(max int) *counter {
 	return &counter{i: 0, max: max}
 }

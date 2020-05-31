@@ -12,16 +12,16 @@ func Merge2Channels(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- 
 }
 
 func SumChannels(f func(int) int, in1 int, in2 int, out chan<- int, key int, wg *sync.WaitGroup, pwg *sync.WaitGroup, max int) {
+	defer wg.Done()
 	res := f(in1) + f(in2)
     if key > 0 {
 		pwg.Wait()
 	}
 	out <- res
-	defer wg.Done()
 	// println(key, ":", res)
-	if key == max - 1 {
-		close(out)
-	}
+	// if key == max {
+	// 	close(out)
+	// }
 }
 
 func Sum2ChannelsN(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- int, n int) {

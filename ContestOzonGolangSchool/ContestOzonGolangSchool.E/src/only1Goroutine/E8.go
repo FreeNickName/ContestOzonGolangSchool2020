@@ -3,27 +3,26 @@ package only1Goroutine
 type PkgName struct {}
 
 func Merge2Channels(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- int, n int) {
-	go Sum2ChannelsN(f, in1, in2, out, n)
+	go Sum2Channels(f, in1, in2, out, n)
 }
 
-func Sum2ChannelsN(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- int, n int) {
-	i := 0
-	for  {
-		i++
-		if i == n {
-			return
-		}
-
+func Sum2Channels(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- int, n int) {
+	for i := 0; i < n; i++  {
 		sum := 0
-		ok := false
 		select {
-			case sum, ok = <-in1:
-				sum = f(<-in2) + f(sum)
-			case sum, ok = <-in2:
-				sum = f(<-in1) + f(sum)
-		}
-		if !ok {
-			return
+			case res, ok := <-in1:
+				// println(i, ok, res)
+				if !ok {
+					return
+				}
+				sum += f(<-in2) + f(res)
+				// println(i, ok, res, sum)
+			case res, ok := <-in2:
+				// println(i, ok, res)
+				if !ok {
+					return
+				}
+				sum += f(<-in1) + f(res)
 		}
 		out <- sum
 	}
