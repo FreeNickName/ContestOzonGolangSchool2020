@@ -1,7 +1,8 @@
-# ContestOzonGolangSchool2020
-Решение задач отбора на школу Go разработки Ozon
+# Решение задач отбора на школу Go разработки Ozon 2020
 
 ТЗ лежит в корне в pdf
+
+## Задача E
 
 В итоге не решил последнюю задачу E на go.
 Проблема в том, что есть ситуация, когда пишет ошибку WA и в логах пусто.
@@ -26,45 +27,47 @@
 
 Мне больше всего понравилась mapAndChan.
 
-Результаты тестов на i7-9750H
-30 итераций
-[asyncF] max: 30 complexity: 40000000. elapsed 573.1365ms
-[asyncF2] max: 30 complexity: 40000000. elapsed 295.7153ms
-[asyncChannels] max: 30 complexity: 40000000. elapsed 294.8214ms
-[asyncFAndSum] max: 30 complexity: 40000000. elapsed 612.3635ms
-[sync1WG] max: 30 complexity: 40000000. elapsed 574.0347ms
-[sync2WG] max: 30 complexity: 40000000. elapsed 116.6828ms
-[sync4WG] max: 30 complexity: 40000000. elapsed 107.685ms
-[mapAndChan] max: 30 complexity: 40000000. elapsed 104.7199ms
-[map2out] max: 30 complexity: 40000000. elapsed 105.7176ms
-[mapAndCache] max: 30 complexity: 40000000. elapsed 24.933ms
-[syncCounter] max: 30 complexity: 40000000. elapsed 109.7061ms
+### Результаты тестов на i7-9750H
 
-300
-[asyncF] max: 300 complexity: 40000000. elapsed 5.7353861s
-[asyncF2] max: 300 complexity: 40000000. elapsed 2.9136942s
-[asyncChannels] max: 300 complexity: 40000000. elapsed 2.9103989s
-[asyncFAndSum] max: 300 complexity: 40000000. elapsed 5.678115s
-[sync1WG] max: 300 complexity: 40000000. elapsed 5.6859444s
-[sync2WG] max: 300 complexity: 40000000. elapsed 1.0262657s
-[sync4WG] max: 300 complexity: 40000000. elapsed 1.0202696s
-[mapAndChan] max: 300 complexity: 40000000. elapsed 1.0177831s
-[map2out] max: 300 complexity: 40000000. elapsed 1.0212678s
-[mapAndCache] max: 300 complexity: 40000000. elapsed 25.9307ms
-[syncCounter] max: 300 complexity: 40000000. elapsed 1.0227899s
+#### 30 итераций
+[asyncF] max: 30 complexity: 40000000. elapsed 573.1365ms  
+[asyncF2] max: 30 complexity: 40000000. elapsed 295.7153ms  
+[asyncChannels] max: 30 complexity: 40000000. elapsed 294.8214ms  
+[asyncFAndSum] max: 30 complexity: 40000000. elapsed 612.3635ms  
+[sync1WG] max: 30 complexity: 40000000. elapsed 574.0347ms  
+[sync2WG] max: 30 complexity: 40000000. elapsed 116.6828ms  
+[sync4WG] max: 30 complexity: 40000000. elapsed 107.685ms  
+[mapAndChan] max: 30 complexity: 40000000. elapsed 104.7199ms  
+[map2out] max: 30 complexity: 40000000. elapsed 105.7176ms  
+[mapAndCache] max: 30 complexity: 40000000. elapsed 24.933ms  
+[syncCounter] max: 30 complexity: 40000000. elapsed 109.7061ms  
 
-3000
-[asyncF] max: 3000 complexity: 40000000. elapsed 58.9259064s
-[asyncF2] max: 3000 complexity: 40000000. elapsed 29.9316544s
-[asyncChannels] max: 3000 complexity: 40000000. elapsed 29.8778229s
-[asyncFAndSum] max: 3000 complexity: 40000000. elapsed 58.9555956s
-[sync1WG] max: 3000 complexity: 40000000. elapsed 59.1204983s
-[sync2WG] max: 3000 complexity: 40000000. elapsed 10.2157454s
-[sync4WG] max: 3000 complexity: 40000000. elapsed 10.225214s
-[mapAndChan] max: 3000 complexity: 40000000. elapsed 10.2162285s
-[map2out] max: 3000 complexity: 40000000. elapsed 10.5373989s
-[mapAndCache] max: 3000 complexity: 40000000. elapsed 26.9275ms
-[syncCounter] max: 3000 complexity: 40000000. elapsed 10.2970105s
+#### 300
+[asyncF] max: 300 complexity: 40000000. elapsed 5.7353861s  
+[asyncF2] max: 300 complexity: 40000000. elapsed 2.9136942s  
+[asyncChannels] max: 300 complexity: 40000000. elapsed 2.9103989s  
+[asyncFAndSum] max: 300 complexity: 40000000. elapsed 5.678115s  
+[sync1WG] max: 300 complexity: 40000000. elapsed 5.6859444s  
+[sync2WG] max: 300 complexity: 40000000. elapsed 1.0262657s   
+[sync4WG] max: 300 complexity: 40000000. elapsed 1.0202696s   
+[mapAndChan] max: 300 complexity: 40000000. elapsed 1.0177831s   
+[map2out] max: 300 complexity: 40000000. elapsed 1.0212678s  
+[mapAndCache] max: 300 complexity: 40000000. elapsed 25.9307ms    
+[syncCounter] max: 300 complexity: 40000000. elapsed 1.0227899s   
+ 
+#### 3000
+[asyncF] max: 3000 complexity: 40000000. elapsed 58.9259064s    
+[asyncF2] max: 3000 complexity: 40000000. elapsed 29.9316544s   
+[asyncChannels] max: 3000 complexity: 40000000. elapsed 29.8778229s   
+[asyncFAndSum] max: 3000 complexity: 40000000. elapsed 58.9555956s    
+[sync1WG] max: 3000 complexity: 40000000. elapsed 59.1204983s    
+[sync2WG] max: 3000 complexity: 40000000. elapsed 10.2157454s   
+[sync4WG] max: 3000 complexity: 40000000. elapsed 10.225214s   
+[mapAndChan] max: 3000 complexity: 40000000. elapsed 10.2162285s   
+[map2out] max: 3000 complexity: 40000000. elapsed 10.5373989s    
+[mapAndCache] max: 3000 complexity: 40000000. elapsed 26.9275ms   
+[syncCounter] max: 3000 complexity: 40000000. elapsed 10.2970105s    
 
+## Остальные задачи
 По остальным задачам нет проблем, если не тупить, ничего особенного они не представляют, хотя я бы попробовал решить F на nodejs еще..
 У меня они решены на C# 
