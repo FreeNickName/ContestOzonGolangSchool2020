@@ -44,17 +44,14 @@ func SumChannels(in1 <-chan int, in2 <-chan int, out chan<- int, max int) {
 
 func UseFChannel(f func(int) int, in <-chan int, out chan<- int, max int) {
 	defer close(out)
-
 	i := 0
 	for ; i < max; i++ {
-		select {
-			case res, ok := <-in:
-				if !ok {
-					panic("in closed")
-					// return
-				} 
-				out <- f(res)
-		}
+		res, ok := <-in
+		if !ok {
+			panic("in closed")
+			// return
+		} 
+		out <- f(res)
 	}
 	// defer println("UseFChannel is done", i)
 }

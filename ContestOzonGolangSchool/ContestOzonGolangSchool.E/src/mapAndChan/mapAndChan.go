@@ -99,22 +99,20 @@ func UseFToBuff(f func(int) int, key int, val int, b *syncMap, done chan<- bool)
 func ReadBuffByOrder(b *syncMap, out chan<- int, max int, signal <-chan bool) {
 	// defer close(out)
 	for i := 0; i < max; {
-		select {
-			case _, oks := <-signal:
-				if (!oks) {
-					panic("signal closed")
-					// return
-				}
-				for {
-					v, ok := b.Load(i)
-					// println("b", i, "=", v)
-					if !ok {
-						break
-					}	
-					out <- v
-					b.Delete(i)
-					i++
-				}
+		_, oks := <-signal
+		if (!oks) {
+			panic("signal closed")
+			// return
+		}
+		for {
+			v, ok := b.Load(i)
+			// println("b", i, "=", v)
+			if !ok {
+				break
+			}	
+			out <- v
+			b.Delete(i)
+			i++
 		}
 	}
 }

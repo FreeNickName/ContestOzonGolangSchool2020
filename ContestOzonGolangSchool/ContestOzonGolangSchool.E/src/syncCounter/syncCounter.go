@@ -39,23 +39,13 @@ func Merge2Channels(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- 
 	f2 := make(chan int, 10)
 	b1 := CreateMap()
 	b2 := CreateMap()
-	// s1 := make(chan bool, 10)
-	// s2 := make(chan bool, 10)
 	c1 := CreateCounter(n)
 	c2 := CreateCounter(n)
 
 	go ChannelToBuff(f, in1, n, b1, f1, c1)
 	go ChannelToBuff(f, in2, n, b2, f2, c2)
-
-	// go MapToChanByOrder(b1, f1, n, s1)
-	// go MapToChanByOrder(b2, f2, n, s2)
-
 	go SumChannels(f1, f2, out)
 }
-
-// func fast(x int) int {
-// 	return int(math.Pow(float64(x), 2))
-// }
 
 func SumChannels(in1 <-chan int, in2 <-chan int, out chan<- int) {
 	for  {
@@ -120,7 +110,7 @@ func CreateCounter(max int) *counter {
 	return &counter{i: 0, max: max}
 }
 
-// Запись мапа в канал по порядку ключей в asc, signal указывает наполнение мапа 
+// Запись мапа в канал по порядку ключей в asc
 func MapToChanByOrder(b *syncMap, out chan<- int, c *counter) {
 	defer c.Unlock()
 	c.Lock()

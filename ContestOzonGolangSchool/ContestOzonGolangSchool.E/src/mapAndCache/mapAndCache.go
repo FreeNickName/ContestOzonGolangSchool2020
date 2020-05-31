@@ -111,22 +111,20 @@ func ReadBuffByOrder(b *syncMap, out chan<- int, max int, signal <-chan bool) {
 	// defer close(out)
 	// defer println("ReadBuffByOrder is done")
 	for i := 0; i < max; {
-		select {
-			case _, oks := <-signal:
-				if (!oks) {
-					println("signal closed")
-					return
-				}
-				for {
-					v, ok := b.Load(i)
-					// println("b", i, "=", v)
-					if !ok {
-						break
-					}	
-					out <- v
-					b.Delete(i)
-					i++
-				}
+		_, oks := <-signal
+		if (!oks) {
+			println("signal closed")
+			return
+		}
+		for {
+			v, ok := b.Load(i)
+			// println("b", i, "=", v)
+			if !ok {
+				break
+			}	
+			out <- v
+			b.Delete(i)
+			i++
 		}
 	}
 }
