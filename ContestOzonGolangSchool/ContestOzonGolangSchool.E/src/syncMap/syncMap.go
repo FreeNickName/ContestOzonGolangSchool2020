@@ -45,15 +45,11 @@ func Merge2Channels(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- 
 	go ChannelToBuff(f, in1, n, b1, s1)
 	go ChannelToBuff(f, in2, n, b2, s2)
 
-	go MapToChanByOrder(b1, f1, n, s1)
-	go MapToChanByOrder(b2, f2, n, s2)
+	go ReadBuffByOrder(b1, f1, n, s1)
+	go ReadBuffByOrder(b2, f2, n, s2)
 
 	go SumChannels(f1, f2, out)
 }
-
-// func fast(x int) int {
-// 	return int(math.Pow(float64(x), 2))
-// }
 
 func SumChannels(in1 <-chan int, in2 <-chan int, out chan<- int) {
 	for  {
@@ -61,13 +57,17 @@ func SumChannels(in1 <-chan int, in2 <-chan int, out chan<- int) {
 		ok := false
 		select {
 			case sum, ok = <-in1:
-				sum += <-in2
+				if ok {
+					sum += <-in2
+				}
 			case sum, ok = <-in2:
-				sum += <-in1
+				if ok {
+					sum += <-in1
+				}
 		}
 		if !ok {
 			// println("push to out is done")
-			// close(out)
+			close(out)
 			return
 		}
 		out <- sum
@@ -75,34 +75,25 @@ func SumChannels(in1 <-chan int, in2 <-chan int, out chan<- int) {
 }
 
 func ChannelToBuff(f func(int) int, in <-chan int, max int, b *syncMap, done chan<- bool) {
-	i := 0
-	for  {
-		if i == max {
-			break
-		}
+	for i := 0; i < max; i++ {
 		res, ok := <-in
 		if !ok {
 			println("in closed")
 			break
 		}
-		go UseFToMap(f, i, res, b, done)
-		i++
+		go UseFToBuff(f, i, res, b, done)
 	}
 }
 
-func UseFToMap(f func(int) int, key int, val int, b *syncMap, done chan<- bool) {
+func UseFToBuff(f func(int) int, key int, val int, b *syncMap, done chan<- bool) {
 	b.Store(key, f(val))
 	// println("f:", key, "=", val)
 	done <- true
 }
 
 // Запись мапа в канал по порядку ключей в asc, signal указывает наполнение мапа 
-func MapToChanByOrder(b *syncMap, out chan<- int, max int, signal <-chan bool) {
-	i := 0
-	for  {
-		if i == max {
-			break
-		}
+func ReadBuffByOrder(b *syncMap, out chan<- int, max int, signal <-chan bool) {
+	for i := 0; i < max; {
 		select {
 			case _, oks := <-signal:
 				if (!oks) {
@@ -123,5 +114,3 @@ func MapToChanByOrder(b *syncMap, out chan<- int, max int, signal <-chan bool) {
 	}
 	close(out)
 }
-
-
