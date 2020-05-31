@@ -3,49 +3,58 @@ package asyncFEachIn
 type PkgName struct {}
 
 func Merge2Channels(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- int, n int) {
+	go ProcessMerge(f, in1, in2, out, n)
+}
+
+func ProcessMerge(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- int, n int) {
 	f1 := make(chan int, 10)
 	f2 := make(chan int, 10)
 
-	go UseFChannels(f, in1, f1, n)
-	go UseFChannels(f, in2, f2, n)
-
-	go SumChannels(f1, f2, out)
+	go UseFChannel(f, in1, f1, n)
+	go UseFChannel(f, in2, f2, n)
+	go SumChannels(f1, f2, out, n)
 }
 
-func SumChannels(in1 <-chan int, in2 <-chan int, out chan<- int) {
-	for  {
+func SumChannels(in1 <-chan int, in2 <-chan int, out chan<- int, max int) {
+	i := 0
+	for ; i < max; {
 		sum := 0
 		ok := false
 		select {
 			case sum, ok = <-in1:
-				sum += <-in2
+				if ok {
+					sum += <-in2
+				} else {
+					println("in1 is closed")
+				}
 			case sum, ok = <-in2:
-				sum += <-in1
+				if ok {
+					sum += <-in1
+				} else {
+					println("in2 is closed")
+				}
 		}
-		if !ok {
-			// println("push to out is done")
-			// close(out)
-			return
+		if ok {
+			out <- sum
+			i++
 		}
-		out <- sum
 	}
+	// defer println("SumChannels is done", i)
 }
 
-func UseFChannels(f func(int) int, in1 <-chan int, out1 chan<- int, n int) {
+func UseFChannel(f func(int) int, in <-chan int, out chan<- int, max int) {
+	defer close(out)
+
 	i := 0
-	for  {
-		if i == n {
-			break
-		}
-		i++
+	for ; i < max; i++ {
 		select {
-			case res, ok := <-in1:
+			case res, ok := <-in:
 				if !ok {
-					println("in1 closed")
-					break
+					panic("in closed")
+					// return
 				} 
-				out1 <- f(res)
+				out <- f(res)
 		}
 	}
-	close(out1)
+	// defer println("UseFChannel is done", i)
 }

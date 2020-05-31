@@ -43,8 +43,8 @@ func ProcessMerge(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- in
 	f2 := make(chan int, 2)
 	b1 := CreateMap()
 	b2 := CreateMap()
-	s1 := make(chan bool, 2)
-	s2 := make(chan bool, 2)
+	s1 := make(chan bool, 10)
+	s2 := make(chan bool, 10)
 
 	go ChannelToBuff(f, in1, n, b1, s1)
 	go ChannelToBuff(f, in2, n, b2, s2)
@@ -56,6 +56,7 @@ func ProcessMerge(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- in
 }
 
 func SumChannels(in1 <-chan int, in2 <-chan int, out chan<- int, max int) {
+	// defer close(out)
 	for i := 0; i < max; i++ {
 		sum := 0
 		ok := false
@@ -70,8 +71,7 @@ func SumChannels(in1 <-chan int, in2 <-chan int, out chan<- int, max int) {
 				}
 		}
 		if !ok {
-			// println("push to out is done")
-			close(out)
+			// println("in is closed")
 			return
 		}
 		out <- sum
@@ -82,8 +82,8 @@ func ChannelToBuff(f func(int) int, in <-chan int, max int, b *syncMap, done cha
 	for i := 0; i < max; i++ {
 		res, ok := <-in
 		if !ok {
-			println("in closed")
-			break
+			panic("in is closed")
+			// break
 		}
 		go UseFToBuff(f, i, res, b, done)
 	}
@@ -97,12 +97,13 @@ func UseFToBuff(f func(int) int, key int, val int, b *syncMap, done chan<- bool)
 
 // Запись мапа в канал по порядку ключей в asc, signal указывает наполнение мапа 
 func ReadBuffByOrder(b *syncMap, out chan<- int, max int, signal <-chan bool) {
+	// defer close(out)
 	for i := 0; i < max; {
 		select {
 			case _, oks := <-signal:
 				if (!oks) {
-					println("signal closed")
-					return
+					panic("signal closed")
+					// return
 				}
 				for {
 					v, ok := b.Load(i)
@@ -116,5 +117,4 @@ func ReadBuffByOrder(b *syncMap, out chan<- int, max int, signal <-chan bool) {
 				}
 		}
 	}
-	// close(out)
 }

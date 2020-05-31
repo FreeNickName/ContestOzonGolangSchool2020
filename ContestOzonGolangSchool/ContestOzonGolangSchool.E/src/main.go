@@ -49,10 +49,11 @@ func ToChannel(in chan<- int, x int) {
 }
 
 func main() {
-	max := 1000
-	complexity := 1000 * 1000 * 100
+	max := 3000
+	complexity := 1000 * 1000 * 40
 
-	digitsPoolSize := max + 70
+	extraSize := 70
+	digitsPoolSize := max + extraSize
 	testName := reflect.TypeOf(E.PkgName{}).PkgPath()
 	defer elapsed(fmt.Sprintf("[%s] max: %d complexity: %d", testName, max, complexity))()
 
@@ -72,6 +73,10 @@ func main() {
 			a := f_fast(x2) + f_fast(x1)
 			ToChannel(ans, a)
 			// println("a(", i, "):", a, "=", x1, "+", x2)
+			// if i > 100 {
+			// 	close(in1)
+			// 	break
+			// }
 		}
 	}()
 
@@ -117,6 +122,16 @@ func main() {
 	}()
 	wg.Wait()
 	if cnt != max {
-		panic(fmt.Sprintf("amount digits wrong: %d <> %d", max, cnt))
+		panic(fmt.Sprintf("amount iterations wrong: %d <> %d", max, cnt))
 	}
+	if extraSize != len(in1) {
+		panic(fmt.Sprintf("amount digits in in1 is wrong: %d <> %d", extraSize, len(in1)))
+	}
+	if extraSize != len(in2) {
+		panic(fmt.Sprintf("amount digits in in2 is wrong: %d <> %d", extraSize, len(in2)))
+	}
+	if 0 != len(out) {
+		panic(fmt.Sprintf("amount digits in out is wrong: %d <> %d", 0, len(out)))
+	}
+	fmt.Printf("M: Report:\n Iterations: %d\n Last in1: %d\n Last in2: %d\n Last out: %d\n", cnt, len(in1), len(in2), len(out))
 }
