@@ -8,7 +8,8 @@ import (
 	// E "syncMap"
 	// E "syncCounter"
 	// E "asyncFEachIn"
-	E "asyncF"
+	// E "asyncF"
+	E "syncWG"
 	// "math"
 )
 
