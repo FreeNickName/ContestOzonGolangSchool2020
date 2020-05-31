@@ -25,7 +25,7 @@ func Sum2ChannelsN(f func(int) int, in1 <-chan int, in2 <-chan int, out chan<- i
 	prevChanWg := new(sync.WaitGroup)
 	prevCalcWg := new(sync.WaitGroup)
 	i := 0
-	for  {
+	for i < n {
 		currChanWg := new(sync.WaitGroup)
 		currChanWg.Add(1)
 		currCalcWg := new(sync.WaitGroup)
