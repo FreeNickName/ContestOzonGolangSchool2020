@@ -1,4 +1,4 @@
-package asyncFEachIn
+package asyncChannels
 
 type PkgName struct {}
 

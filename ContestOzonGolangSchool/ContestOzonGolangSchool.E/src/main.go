@@ -1,3 +1,4 @@
+//https://github.com/FreeNickName/ContestOzonGolangSchool2020
 package main
 
 import (
@@ -6,11 +7,12 @@ import (
 	"math/rand"
 	"fmt"
 	"reflect"
-	// E "syncMap"
-	E "syncMapWithStore"
+	E "map2out"
+	// E "mapAndChan"
+	// E "mapAndCache"
 	// E "syncCounter"
-	// E "asyncFEachIn"
-	// E "only1Goroutine"
+	// E "asyncChannels"
+	// E "asyncFAndSum"
 	// E "asyncF"
 	// E "sync1WG"
 	// E "sync2WG"
@@ -49,7 +51,7 @@ func ToChannel(in chan<- int, x int) {
 }
 
 func main() {
-	max := 3000
+	max := 30
 	complexity := 1000 * 1000 * 40
 
 	extraSize := 70
